@@ -30,6 +30,7 @@ Mit dieser Browser-Erweiterung kannst du **Anime-Seiten schnell mit einem Rechts
 
 ```bash
 git clone https://github.com/m-reisner/anime-merkliste.git
+```
 
 2. Öffne den Browser (Chrome oder Opera) und gehe zu Erweiterungen → Entwicklermodus aktivieren.
 
