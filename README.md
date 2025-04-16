@@ -30,3 +30,23 @@ Mit dieser Browser-Erweiterung kannst du **Anime-Seiten schnell mit einem Rechts
 
 ```bash
 git clone https://github.com/m-reisner/anime-merkliste.git
+
+2. Öffne den Browser (Chrome oder Opera) und gehe zu Erweiterungen → Entwicklermodus aktivieren.
+
+3. Klicke auf Entpackte Erweiterung laden und wähle den Ordner anime-merkliste aus.
+
+## 🔐 Berechtigungen
+
+Diese Erweiterung benötigt folgende Berechtigungen:
+
+bookmarks – Um Lesezeichen zu erstellen und Ordner zu verwalten
+storage – Um deine Auswahl zu speichern
+contextMenus – Für den Rechtsklick-Eintrag
+notifications – Um dir Bestätigungen und Hinweise zu zeigen
+
+## 🙌 Mitmachen
+
+Pull Requests sind willkommen! Wenn du neue Features vorschlagen möchtest, eröffne ein Issue oder fork das Repo.
+
+## 📝 Lizenz
+MIT License
