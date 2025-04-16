@@ -1,0 +1,9 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Node/npm files (falls du mal automatisieren willst)
+node_modules/
+dist/
+build/
+*.log

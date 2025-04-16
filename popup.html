@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Anime Bookmark Einstellungen</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 15px;
+      width: 300px;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>📁 Zielordner wählen</h1>
+
+  <label for="folderSelect">Lesezeichen-Ordner:</label>
+  <select id="folderSelect">
+    <option disabled selected>Lade Ordner...</option>
+  </select>
+
+  <button id="saveButton">✅ Auswahl speichern</button>
+  <button id="exportButton">📤 Einstellungen exportieren</button>
+  <button id="importButton">📥 Einstellungen importieren</button>
+  
+  <!-- Neuer Button für den Papierkorb -->
+  <button id="clearTrashButton" style="display:none;">🗑️ Papierkorb leeren</button>
+
+  <div class="footer">Anime Bookmark Extension</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
