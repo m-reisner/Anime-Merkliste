@@ -8,10 +8,12 @@ Mit dieser Browser-Erweiterung kannst du **Anime-Seiten schnell mit einem Rechts
 
 - 🧠 **Merke Seiten mit Rechtsklick** → Kontextmenüeintrag "Anime merken"
 - 🗂️ **Wähle einen Zielordner** in deiner Lesezeichenleiste
-- ➕ **Erstelle neue Ordner** direkt aus der Erweiterung
+- ➕ **Erstelle neue Ordner** direkt aus dem Popup
 - ❌ **Lösche Ordner**, wenn du sie nicht mehr brauchst
-- ✅ **Speichert deine Auswahl dauerhaft** (und optional synchronisiert über `chrome.storage.sync`)
-- 📦 Unterstützt **Opera & Chrome**
+- 🧹 **Leere den Papierkorb** mit einem Klick (wenn er Einträge enthält)
+- ✅ **Speichert deine Auswahl dauerhaft** (und synchronisiert über `chrome.storage.sync`, wenn möglich)
+- 💾 **Importiere und exportiere deine Einstellungen**
+- 🌐 Unterstützt **Opera & Chrome**
 
 ---
 
@@ -27,4 +29,4 @@ Mit dieser Browser-Erweiterung kannst du **Anime-Seiten schnell mit einem Rechts
 1. Projekt herunterladen oder klonen:
 
 ```bash
-git clone https://github.com/dein-benutzername/anime-merkliste.git
+git clone https://github.com/m-reisner/anime-merkliste.git
