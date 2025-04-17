@@ -2,12 +2,40 @@ function getStorage() {
   return chrome.storage.sync || chrome.storage.local;
 }
 
+function isRootFolder(folderId) {
+  return ["0", "1", "2", "3"].includes(folderId);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const folderSelect = document.getElementById("folderSelect");
   const saveButton = document.getElementById("saveButton");
   const exportButton = document.getElementById("exportButton");
   const importButton = document.getElementById("importButton");
-  const clearTrashButton = document.getElementById("clearTrashButton");
+  const createButton = document.getElementById("createFolderButton");
+  const deleteButton = document.getElementById("deleteFolderButton");
+  const emptyTrashButton = document.getElementById("emptyTrashButton");
+
+  function updateTrashButtonVisibility() {
+    chrome.bookmarks.getTree((nodes) => {
+      let found = false;
+
+      function searchTrash(nodes) {
+        for (const node of nodes) {
+          const isTrash = node.title.toLowerCase() === "trash" || node.title.toLowerCase() === "papierkorb";
+          if (isTrash && node.children && node.children.length > 0) {
+            found = true;
+            break;
+          }
+          if (node.children) {
+            searchTrash(node.children);
+          }
+        }
+      }
+
+      searchTrash(nodes);
+      emptyTrashButton.style.display = found ? "block" : "none";
+    });
+  }
 
   chrome.bookmarks.getTree((nodes) => {
     folderSelect.innerHTML = "";
@@ -17,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (node.children) {
           const option = document.createElement("option");
           option.value = node.id;
-          option.textContent = " ".repeat(depth * 2) + node.title || "Unbenannt";
+          option.textContent = " ".repeat(depth * 2) + (node.title || "Unbenannt");
           folderSelect.appendChild(option);
           addFolders(node.children, depth + 1);
         }
@@ -26,17 +54,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addFolders(nodes);
 
-    // Auswahl wiederherstellen
     getStorage().get("selectedFolderId", (result) => {
       if (result.selectedFolderId) {
         folderSelect.value = result.selectedFolderId;
       }
     });
+
+    updateTrashButtonVisibility();
   });
 
   saveButton.addEventListener("click", () => {
     getStorage().set({ selectedFolderId: folderSelect.value }, () => {
-      alert("✅ Ordner gespeichert!");
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icons/icon48.png",
+        title: "Gespeichert",
+        message: "✅ Ordner gespeichert!",
+        priority: 2
+      }, () => {
+        window.close();
+      });
     });
   });
 
@@ -44,7 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
     getStorage().get("selectedFolderId", (result) => {
       const data = JSON.stringify(result);
       navigator.clipboard.writeText(data).then(() => {
-        alert("📋 Einstellungen wurden in die Zwischenablage kopiert!");
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: "icons/icon48.png",
+          title: "Exportiert",
+          message: "📋 Einstellungen wurden in die Zwischenablage kopiert!",
+          priority: 2
+        });
       });
     });
   });
@@ -55,57 +98,113 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = JSON.parse(input);
       if (data.selectedFolderId) {
         getStorage().set({ selectedFolderId: data.selectedFolderId }, () => {
-          alert("✅ Einstellungen importiert!");
+          chrome.notifications.create({
+            type: "basic",
+            iconUrl: "icons/icon48.png",
+            title: "Importiert",
+            message: "✅ Einstellungen importiert!",
+            priority: 2
+          });
           folderSelect.value = data.selectedFolderId;
         });
       } else {
-        alert("⚠️ Keine gültigen Einstellungen gefunden.");
-      }
-    } catch (e) {
-      alert("❌ Fehler beim Importieren: Ungültiges JSON.");
-    }
-  });
-
-  // Papierkorb leeren Button aktivieren, wenn es Lesezeichen im Papierkorb gibt
-  chrome.bookmarks.getTree((nodes) => {
-    let hasTrash = false;
-    function checkTrash(items) {
-      for (const node of items) {
-        if (node.title === "Papierkorb") {
-          hasTrash = true;
-          break;
-        }
-        if (node.children) {
-          checkTrash(node.children);
-        }
-      }
-    }
-
-    checkTrash(nodes);
-
-    if (hasTrash) {
-      clearTrashButton.style.display = "block";
-    }
-  });
-
-  // Papierkorb leeren
-  clearTrashButton.addEventListener("click", () => {
-    chrome.bookmarks.getTree((nodes) => {
-      function deleteFromTrash(items) {
-        items.forEach(item => {
-          if (item.title === "Papierkorb" && item.children) {
-            item.children.forEach(child => {
-              chrome.bookmarks.remove(child.id);
-            });
-          }
-          if (item.children) {
-            deleteFromTrash(item.children);
-          }
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: "icons/icon48.png",
+          title: "Fehler",
+          message: "⚠️ Keine gültigen Einstellungen gefunden.",
+          priority: 2
         });
       }
+    } catch (e) {
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icons/icon48.png",
+        title: "Import-Fehler",
+        message: "❌ Ungültiges JSON.",
+        priority: 2
+      });
+    }
+  });
 
-      deleteFromTrash(nodes);
-      alert("🗑️ Papierkorb wurde geleert!");
+  createButton?.addEventListener("click", () => {
+    const name = prompt("Neuen Ordnernamen eingeben:");
+    if (!name) return;
+
+    chrome.bookmarks.create({ parentId: "1", title: name }, (newFolder) => {
+      const option = document.createElement("option");
+      option.value = newFolder.id;
+      option.textContent = name;
+      folderSelect.appendChild(option);
+      folderSelect.value = newFolder.id;
+
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icons/icon48.png",
+        title: "Ordner erstellt",
+        message: `🎉 Neuer Ordner "${name}" wurde erstellt!`,
+        priority: 2
+      });
+    });
+  });
+
+  deleteButton?.addEventListener("click", () => {
+    const folderId = folderSelect.value;
+    if (!folderId || isRootFolder(folderId)) {
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icons/icon48.png",
+        title: "Fehler",
+        message: "❌ Dieser Ordner kann nicht gelöscht werden.",
+        priority: 2
+      });
+      return;
+    }
+
+    if (confirm("Diesen Ordner wirklich löschen?")) {
+      chrome.bookmarks.removeTree(folderId, () => {
+        const optionToRemove = folderSelect.querySelector(`option[value="${folderId}"]`);
+        if (optionToRemove) {
+          optionToRemove.remove();
+        }
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: "icons/icon48.png",
+          title: "Ordner gelöscht",
+          message: "🗑️ Der Ordner wurde gelöscht.",
+          priority: 2
+        });
+      });
+    }
+  });
+
+  emptyTrashButton?.addEventListener("click", () => {
+    chrome.bookmarks.getTree((nodes) => {
+      function findAndDeleteTrashItems(nodes) {
+        for (const node of nodes) {
+          const isTrash = node.title.toLowerCase() === "trash" || node.title.toLowerCase() === "papierkorb";
+          if (isTrash && node.children) {
+            for (const child of node.children) {
+              chrome.bookmarks.removeTree(child.id);
+            }
+          }
+          if (node.children) {
+            findAndDeleteTrashItems(node.children);
+          }
+        }
+      }
+
+      findAndDeleteTrashItems(nodes);
+
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: "icons/icon48.png",
+        title: "Papierkorb geleert",
+        message: "🧹 Papierkorb wurde geleert.",
+        priority: 2
+      });
+
+      updateTrashButtonVisibility();
     });
   });
 });

@@ -3,8 +3,8 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.notifications.create({
     type: 'basic',
     iconUrl: 'icons/icon48.png',
-    title: 'Anime Bookmark Extension installiert!',
-    message: 'Klicke auf das Erweiterungssymbol und wähle einen Ordner, um die Erweiterung zu konfigurieren.',
+    title: ' 🎉 Anime Bookmark Extension installiert!',
+    message: 'Bitte pinne die Erweiterung, klicke auf das Erweiterungssymbol und wähle einen Ordner, um die Erweiterung zu konfigurieren.',
     priority: 2
   });
 
@@ -67,7 +67,7 @@ function speichereLesezeichen(folderId, info) {
       type: 'basic',
       iconUrl: 'icons/icon48.png',
       title: 'Lesezeichen gespeichert!',
-      message: 'Das Anime wurde erfolgreich als Lesezeichen gespeichert.',
+      message: ' 🎉 Das Anime wurde erfolgreich als Lesezeichen gespeichert.',
       priority: 2
     });
   });
