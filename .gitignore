@@ -7,3 +7,8 @@ node_modules/
 dist/
 build/
 *.log
+
+# Opera Application Keys 4 Store (PEM)
+.KEYS/
+*.crx
+*.pem
